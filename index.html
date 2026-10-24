@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sondaj Boruları</title>
+<meta name="description" content="">
+<meta name="theme-color" content="#1f2326">
+<style>
+:root{--accent:#f28c00;--accent-text:#f28c00;--on-accent:#111111;--bg:#1f2326;--surface:#2a2f33;--text:#eceff1;--muted:#aeb3b7;--line:#3d4348}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+body.adm-open{overflow:hidden}
+img{max-width:100%;display:block}
+a{color:inherit}
+.wrap{width:100%;max-width:1080px;margin:0 auto;padding:0 18px}
+.ico{width:20px;height:20px;flex:none}
+
+/* ÜST ÇUBUK */
+.top{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;min-height:64px;gap:12px;position:relative}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1.02rem;letter-spacing:.03em;text-transform:uppercase;line-height:1.2}
+.brand img{max-height:42px;width:auto}
+.burger{background:none;border:2px solid var(--line);color:var(--text);width:48px;height:48px;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.burger svg{width:24px;height:24px}
+.nav{display:none;position:absolute;left:-18px;right:-18px;top:100%;background:var(--bg);border-bottom:4px solid var(--accent);flex-direction:column}
+.nav.open{display:flex}
+.nav a{padding:16px 18px;text-decoration:none;font-weight:700;border-top:1px solid var(--line)}
+.nav a.on{color:var(--accent-text)}
+@media(min-width:760px){
+ .burger{display:none}
+ .nav{display:flex;position:static;flex-direction:row;border:0;background:none;gap:2px}
+ .nav a{border:0;padding:10px 14px}
+}
+
+/* DÜĞMELER */
+.acts{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 24px;border-radius:3px;font-weight:800;font-size:1rem;background:var(--accent);color:var(--on-accent);text-decoration:none;border:2px solid var(--accent);cursor:pointer;font-family:inherit}
+.btn.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.btn.sm{min-height:46px;padding:0 18px}
+
+/* BÖLÜMLER */
+.hero{background:var(--surface);border-bottom:5px solid var(--accent);padding:46px 0 42px}
+.hero .tag{display:block;width:56px;height:6px;background:var(--accent);margin-bottom:20px}
+.hero h1{margin:0 0 16px;font-size:clamp(1.9rem,7.5vw,3.2rem);line-height:1.12;font-weight:900;text-transform:uppercase;letter-spacing:.01em}
+.hero p{margin:0 0 26px;max-width:640px;color:var(--muted);font-size:1.08rem}
+.sec{padding:46px 0}
+.sec.alt{background:var(--surface)}
+.sec h2{margin:0 0 28px;font-size:1.45rem;text-transform:uppercase;letter-spacing:.04em;font-weight:800;padding-bottom:14px;position:relative}
+.sec h2::after{content:"";position:absolute;left:0;bottom:0;width:48px;height:4px;background:var(--accent)}
+.prose p{margin:0 0 1em;max-width:70ch}
+.cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--accent);padding:18px;border-radius:3px}
+.alt .card{background:var(--bg)}
+.card h3{margin:0 0 6px;font-size:1.08rem}
+.card p{margin:0;color:var(--muted);white-space:pre-line}
+.price{margin-top:12px;font-weight:800;color:var(--accent-text)}
+.card.q p{color:var(--text);font-style:italic}
+.card.q cite{display:block;margin-top:12px;font-style:normal;font-weight:800}
+
+/* GALERİ */
+.grid{display:grid;gap:10px;grid-template-columns:repeat(2,1fr)}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1000px){.grid{grid-template-columns:repeat(4,1fr)}}
+.ph-btn{padding:0;border:0;background:var(--line);cursor:zoom-in;display:block;width:100%;aspect-ratio:4/3;overflow:hidden;border-radius:3px}
+.ph-btn img{width:100%;height:100%;object-fit:cover}
+.ph-empty{display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;background:var(--line);color:var(--muted);font-size:.9rem;text-align:center;padding:10px;border-radius:3px}
+.slider{position:relative}
+.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-radius:3px}
+.track::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:4/3;background:var(--line)}
+@media(min-width:760px){.slide{aspect-ratio:16/9}}
+.slide .ph-btn{aspect-ratio:auto;height:100%;border-radius:0}
+.sl-b{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:56px;border:0;background:var(--accent);color:var(--on-accent);font-size:1.7rem;font-weight:800;cursor:pointer;line-height:1}
+.sl-prev{left:0}.sl-next{right:0}
+.dots{display:flex;justify-content:center;gap:4px;margin-top:6px;flex-wrap:wrap}
+.dots button{width:34px;height:34px;border:0;background:none;cursor:pointer;position:relative;padding:0}
+.dots button::after{content:"";position:absolute;left:8px;right:8px;top:15px;height:4px;background:var(--line)}
+.dots button.on::after{background:var(--accent)}
+
+/* ÇALIŞMA SAATLERİ */
+.hours{max-width:520px}
+.hrow{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--line)}
+.hrow b{font-weight:700}
+.hrow span{color:var(--muted);text-align:right}
+
+/* KONUMLAR */
+.locs{display:grid;gap:26px}
+@media(min-width:900px){.locs.two{grid-template-columns:1fr 1fr}}
+.loc h3{margin:0 0 4px;font-size:1.15rem}
+.loc .addr{margin:0 0 12px;color:var(--muted)}
+.map{width:100%;height:260px;border:0;background:var(--line);margin-bottom:12px;border-radius:3px;display:block}
+
+/* İLETİŞİM */
+.clist{display:grid;gap:12px;max-width:600px}
+.crow{display:flex;align-items:center;gap:14px;padding:14px 16px;min-height:64px;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:3px;text-decoration:none}
+.alt .crow{background:var(--bg)}
+.crow .ico{width:26px;height:26px;color:var(--accent-text)}
+.crow small{display:block;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.crow strong{font-size:1.08rem;word-break:break-word}
+
+/* ALT BİLGİ */
+footer{padding:30px 0 34px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+.adm-link{display:inline-block;margin-top:12px;font-size:.75rem;opacity:.65;text-decoration:underline}
+
+/* TELEFONDA ALTTA SABİT ARA / WHATSAPP ÇUBUĞU */
+.mbar{position:fixed;left:0;right:0;bottom:0;display:flex;gap:2px;background:var(--bg);z-index:30;border-top:3px solid var(--accent)}
+.mbar a{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;font-weight:800;text-decoration:none;background:var(--accent);color:var(--on-accent)}
+.mbar a.wa{background:var(--surface);color:var(--text)}
+body.has-mbar{padding-bottom:62px}
+@media(min-width:760px){.mbar{display:none}body.has-mbar{padding-bottom:0}}
+
+/* BÜYÜK FOTOĞRAF */
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:56px 10px 40px}
+#lightbox[hidden]{display:none}
+#lightbox img{max-width:100%;max-height:100%;object-fit:contain}
+#lightbox button{position:absolute;border:0;background:var(--accent);color:var(--on-accent);font-weight:800;cursor:pointer;width:52px;height:52px;font-size:1.7rem;line-height:1}
+.lb-x{top:0;right:0}.lb-p{left:0;top:50%;margin-top:-26px}.lb-n{right:0;top:50%;margin-top:-26px}
+.lb-cap{position:absolute;left:0;right:0;bottom:8px;text-align:center;color:#ddd;font-size:.9rem;padding:0 60px}
+
+.center-msg{padding:80px 20px;text-align:center;color:var(--muted)}
+.center-msg a{color:var(--accent-text)}
+
+/* ================= YÖNETİCİ PANELİ (site temasından bağımsız) ================= */
+#admin{position:fixed;inset:0;overflow:auto;background:#eef0f1;color:#1d2125;z-index:60;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+#admin[hidden]{display:none}
+#admin *{box-sizing:border-box}
+.a-top{position:sticky;top:0;height:64px;background:#23272b;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 12px;gap:8px;z-index:4}
+.a-top b{font-size:1.02rem}
+.a-link{color:#fff;text-decoration:none;padding:0 14px;border:1px solid #666;border-radius:6px;background:none;font:inherit;cursor:pointer;min-height:44px;display:inline-flex;align-items:center}
+.a-nav{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:#fff;border-bottom:1px solid #d5d9dc;position:sticky;top:64px;z-index:3}
+.a-nav button{flex:none;min-height:48px;padding:0 16px;border:2px solid #d5d9dc;background:#fff;border-radius:6px;font:inherit;font-weight:700;cursor:pointer;color:#1d2125}
+.a-nav button.on{background:#23272b;border-color:#23272b;color:#fff}
+.a-main{max-width:820px;margin:0 auto;padding:18px 14px 150px}
+.a-main h2{margin:4px 0 6px;font-size:1.45rem}
+.a-main h3{margin:0 0 12px;font-size:1.08rem}
+.a-help{margin:0 0 16px;color:#4a545b}
+.a-card{background:#fff;border:1px solid #d5d9dc;border-radius:8px;padding:16px;margin-bottom:16px}
+.fld{display:block;margin-bottom:14px}
+.fld>span{display:block;font-weight:700;margin-bottom:6px}
+.fld input,.fld textarea,.fld select{width:100%;padding:12px;border:2px solid #c3c9cd;border-radius:6px;font:inherit;background:#fff;color:#1d2125;min-height:48px}
+.fld input[type=color]{padding:4px;height:56px}
+.fld textarea{resize:vertical}
+.fld small{display:block;color:#5d676e;margin-top:5px}
+.chk{display:flex;align-items:center;gap:12px;min-height:48px;font-weight:600;cursor:pointer}
+.chk input{width:26px;height:26px;flex:none}
+.a-btn{min-height:48px;padding:0 18px;border-radius:6px;border:2px solid #23272b;background:#fff;color:#23272b;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.a-btn.pri{background:#f28c00;border-color:#f28c00;color:#111}
+.a-btn.dng{border-color:#b3261e;color:#b3261e}
+.a-btn.big{min-height:58px;font-size:1.08rem;padding:0 26px}
+.a-btn[disabled]{opacity:.55;cursor:wait}
+.a-save{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:4px solid #f28c00;padding:10px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;z-index:5}
+.a-save span{font-weight:700}
+.a-save span.dirty{color:#b3261e}
+.a-save span.ok{color:#1b6e2d}
+.a-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.item{border:1px solid #d5d9dc;border-radius:8px;padding:14px;margin-bottom:12px;background:#fafbfb}
+.ph{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.ph img{width:110px;height:82px;object-fit:cover;border-radius:4px;background:#ddd}
+.ph .fld{flex:1;min-width:180px;margin:0}
+.opt{display:flex;gap:12px;align-items:center;min-height:52px;padding:10px 14px;border:2px solid #d5d9dc;border-radius:8px;margin-bottom:10px;cursor:pointer;font-weight:600;background:#fff}
+.opt input{width:24px;height:24px;flex:none}
+.opt small{display:block;font-weight:400;color:#5d676e}
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.swb{display:flex;align-items:center;gap:10px;min-height:56px;padding:8px 12px;border:3px solid #d5d9dc;border-radius:8px;background:#fff;font:inherit;font-weight:700;cursor:pointer;text-align:left;color:#1d2125}
+.swb.on{border-color:#23272b;background:#f1f3f4}
+.swb i{width:26px;height:26px;border-radius:50%;border:1px solid #888;flex:none}
+.msg{margin:10px 0 0;font-weight:700}
+.msg.err{color:#b3261e}.msg.ok{color:#1b6e2d}
+.a-login{max-width:420px;margin:0 auto;padding:40px 16px}
+.a-login form{background:#fff;border:1px solid #d5d9dc;border-radius:10px;padding:22px}
+.a-login h1{margin:0 0 16px;font-size:1.4rem}
+.a-login .a-btn{width:100%}
+.a-login a{display:inline-block;margin-top:14px}
+.steps li{margin-bottom:8px}
+</style>
+</head>
+<body>
+<div id="site"></div>
+<div id="admin" hidden></div>
+<div id="lightbox" hidden>
+ <button type="button" class="lb-x" data-lb="close" aria-label="Kapat">&times;</button>
+ <button type="button" class="lb-p" data-lb="prev" aria-label="Önceki">&lsaquo;</button>
+ <img alt="">
+ <button type="button" class="lb-n" data-lb="next" aria-label="Sonraki">&rsaquo;</button>
+ <div class="lb-cap"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+'use strict';
+
+/* ==========================================================================
+   AYARLAR  —  Kurulum 2. adımında bu iki satırı kendi bilgilerinizle değiştireceksiniz.
+   (Bu anahtar herkese açık olması için tasarlanmıştır; gizli şifre DEĞİLDİR.
+    Değişiklik yetkisi sunucudaki güvenlik kurallarıyla sadece sizdedir.)
+   ========================================================================== */
+const SUPABASE_URL = 'BURAYA_SUPABASE_ADRESI';
+const SUPABASE_ANON_KEY = 'BURAYA_ANAHTAR';
+/* ========================================================================== */
+
+const BUCKET = 'site-dosyalari';
+const CACHE_KEY = 'sondaj_site_cache_v1';
+const configured = /^https:\/\/.+/.test(SUPABASE_URL) && !/^BURAYA/.test(SUPABASE_ANON_KEY);
+let sb = null;
+try { if (configured && window.supabase) sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) { console.warn(e); }
+
+let S = null;          // sitede görünen (kaydedilmiş) ayarlar
+let loadError = false; // veritabanından okunamadıysa
+
+/* ---------- yardımcılar ---------- */
+const $ = (s, r) => (r || document).querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Math.random().toString(36).slice(2, 9);
+const clone = o => JSON.parse(JSON.stringify(o));
+const getPath = (o, p) => p.split('.').reduce((a, k) => (a == null ? a : a[k]), o);
+const setPath = (o, p, v) => { const k = p.split('.'); let c = o; for (let i = 0; i < k.length - 1; i++) c = c[k[i]]; c[k[k.length - 1]] = v; };
+const slugify = t => String(t).replace(/İ/g, 'i').toLowerCase().replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ş/g, 's').replace(/ü/g, 'u').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'sayfa';
+const uniqueSlug = (base, used) => { let s = slugify(base), n = 2, t = s; while (used.has(t) || t === 'yonetici') t = s + '-' + n++; return t; };
+
+/* ---------- renk işlemleri ---------- */
+const isHex = h => /^#[0-9a-f]{6}$/i.test(h || '');
+const hex2rgb = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const rgb2hex = a => '#' + a.map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
+const mix = (a, b, t) => { const A = hex2rgb(a), B = hex2rgb(b); return rgb2hex(A.map((v, i) => v * t + B[i] * (1 - t))); };
+const lum = h => { const [r, g, b] = hex2rgb(h).map(v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }); return .2126 * r + .7152 * g + .0722 * b; };
+const contrast = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+
+/* ---------- hazır temalar (mor / mavi-mor yok) ---------- */
+const THEMES = {
+  turuncu: { name: 'Antrasit + Turuncu', accent: '#f28c00', dark: { bg: '#1f2326', surface: '#2a2f33', text: '#eceff1' }, light: { bg: '#f1f2f3', surface: '#ffffff', text: '#1f2326' } },
+  sari:    { name: 'Antrasit + Sarı',    accent: '#f5c400', dark: { bg: '#1f2326', surface: '#2a2f33', text: '#eceff1' }, light: { bg: '#f1f2f3', surface: '#ffffff', text: '#1f2326' } },
+  kirmizi: { name: 'Çelik Gri + Kırmızı', accent: '#d9381e', dark: { bg: '#23272b', surface: '#2e3338', text: '#eef0f1' }, light: { bg: '#eceeef', surface: '#ffffff', text: '#23272b' } },
+  yesil:   { name: 'Koyu Gri + Yeşil',   accent: '#7fb02b', dark: { bg: '#202420', surface: '#2b302b', text: '#eef1ee' }, light: { bg: '#f0f2ee', surface: '#ffffff', text: '#202420' } }
+};
+function themeColors(t) {
+  const p = THEMES[t.preset] || THEMES.turuncu;
+  let c = t.custom ? { accent: t.accent, bg: t.bg, surface: t.surface, text: t.text }
+                   : Object.assign({ accent: p.accent }, p[t.mode === 'light' ? 'light' : 'dark']);
+  const d = THEMES.turuncu.dark;
+  if (!isHex(c.accent)) c.accent = THEMES.turuncu.accent;
+  if (!isHex(c.bg)) c.bg = d.bg;
+  if (!isHex(c.surface)) c.surface = d.surface;
+  if (!isHex(c.text)) c.text = d.text;
+  c.muted = mix(c.text, c.bg, .68);
+  c.line = mix(c.text, c.bg, .2);
+  c.onAccent = lum(c.accent) > .4 ? '#111111' : '#ffffff';
+  c.accentText = contrast(c.accent, c.bg) >= 3 ? c.accent : mix(c.text, c.accent, .75);
+  return c;
+}
+function applyTheme(s) {
+  const c = themeColors(s.theme), r = document.documentElement.style;
+  r.setProperty('--accent', c.accent); r.setProperty('--accent-text', c.accentText); r.setProperty('--on-accent', c.onAccent);
+  r.setProperty('--bg', c.bg); r.setProperty('--surface', c.surface); r.setProperty('--text', c.text);
+  r.setProperty('--muted', c.muted); r.setProperty('--line', c.line);
+  const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = c.bg;
+}
+
+/* ---------- varsayılan (örnek) içerik ---------- */
+const DEFAULT_SHOW = { hero: true, body: true, products: true, gallery: true, hours: true, testimonials: true, locations: true, contact: true };
+const PAGE_BASE = { id: '', slug: '', title: 'Sayfa', menu: true, heroTitle: '', heroText: '', bodyTitle: '', body: '' };
+function defaults() {
+  return {
+    v: 1,
+    company: {
+      name: 'Örnek Sondaj Boruları Ltd.',
+      description: 'Sondaj borusu satışı. Ürün bilgisi ve fiyat için bizi arayın.',
+      footer: '© Örnek Sondaj Boruları Ltd. Tüm hakları saklıdır.'
+    },
+    logoUrl: '', logoPath: '',
+    theme: { preset: 'turuncu', mode: 'dark', custom: false, accent: '#f28c00', bg: '#1f2326', surface: '#2a2f33', text: '#eceff1' },
+    gallery: { enabled: true, title: 'Galeri', mode: 'grid' },
+    photos: [],
+    pages: [{
+      id: 'ana', slug: 'ana-sayfa', title: 'Ana Sayfa', menu: true,
+      heroTitle: 'Sondaj Boruları',
+      heroText: 'Bu bir örnek yazıdır. Yönetici panelinden "Yazılar" bölümüne girip kendi tanıtım cümlenizi yazabilirsiniz.',
+      bodyTitle: 'Hakkımızda',
+      body: 'Bu alan örnek metindir. Firmanızı, sunduğunuz ürünleri ve hizmetleri burada anlatabilirsiniz.\n\nYeni bir paragraf için bir satır boş bırakın.',
+      show: Object.assign({}, DEFAULT_SHOW)
+    }],
+    products: {
+      enabled: true, title: 'Ürünlerimiz', showPrice: true,
+      items: [
+        { id: 'u1', name: 'Örnek Ürün 1', desc: 'Ürün açıklamasını panelden yazın.', price: 'Fiyat için arayın' },
+        { id: 'u2', name: 'Örnek Ürün 2', desc: 'Ürün açıklamasını panelden yazın.', price: 'Fiyat için arayın' },
+        { id: 'u3', name: 'Örnek Ürün 3', desc: 'Ürün açıklamasını panelden yazın.', price: 'Fiyat için arayın' }
+      ]
+    },
+    hours: {
+      enabled: true, title: 'Çalışma Saatleri',
+      items: [{ day: 'Pazartesi - Cuma', time: '08:30 - 18:00' }, { day: 'Cumartesi', time: '09:00 - 14:00' }, { day: 'Pazar', time: 'Kapalı' }]
+    },
+    testimonials: {
+      enabled: false, title: 'Müşteri Yorumları',
+      items: [{ id: 't1', name: 'Örnek Müşteri', text: 'Bu örnek bir yorumdur. Gerçek müşteri yorumlarını panelden ekleyin.' }]
+    },
+    locations: {
+      enabled: true, title: 'Konumlarımız',
+      items: [{ id: 'k1', name: 'Merkez', address: 'Örnek Mahallesi, Örnek Caddesi No:1, Şehir', embed: '' }]
+    },
+    contacts: {
+      enabled: true, title: 'İletişim',
+      items: [
+        { id: 'c1', type: 'phone', label: 'Telefon', value: '0 000 000 00 00' },
+        { id: 'c2', type: 'whatsapp', label: 'WhatsApp', value: '0 500 000 00 00' },
+        { id: 'c3', type: 'email', label: 'E-posta', value: 'ornek@ornek.com' }
+      ]
+    }
+  };
+}
+function merge(def, src) {
+  if (Array.isArray(def)) return Array.isArray(src) ? src : def;
+  if (def && typeof def === 'object') {
+    const o = {}, has = src && typeof src === 'object' && !Array.isArray(src);
+    for (const k of Object.keys(def)) o[k] = merge(def[k], has ? src[k] : undefined);
+    if (has) for (const k of Object.keys(src)) if (!(k in o)) o[k] = src[k];
+    return o;
+  }
+  return src === undefined || src === null ? def : src;
+}
+function normalize(raw) {
+  const s = merge(defaults(), raw || {});
+  if (!Array.isArray(s.pages) || !s.pages.length) s.pages = defaults().pages;
+  const used = new Set();
+  s.pages = s.pages.map(p => {
+    p = Object.assign({}, PAGE_BASE, p);
+    p.show = Object.assign({}, DEFAULT_SHOW, p.show || {});
+    p.id = p.id || uid();
+    if (!p.slug || used.has(p.slug) || p.slug === 'yonetici') p.slug = uniqueSlug(p.title, used);
+    used.add(p.slug);
+    return p;
+  });
+  ['products', 'testimonials', 'locations', 'contacts'].forEach(k => s[k].items.forEach(i => { if (!i.id) i.id = uid(); }));
+  if (!Array.isArray(s.photos)) s.photos = [];
+  return s;
+}
+
+/* ---------- simgeler ---------- */
+const ICON = {
+  phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+  chat: '<path d="M4 5h16v11H9l-5 4z"/>',
+  insta: '<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17" cy="7" r=".8"/>',
+  fb: '<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  pin: '<path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  menu: '<path d="M4 7h16M4 12h16M4 17h16"/>'
+};
+const ico = n => '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICON[n] || ICON.link) + '</svg>';
+
+/* ---------- iletişim türleri ---------- */
+const CONTACT_TYPES = {
+  phone:     { name: 'Telefon',   icon: 'phone', href: v => 'tel:' + v.replace(/[^\d+]/g, '') },
+  whatsapp:  { name: 'WhatsApp',  icon: 'chat',  href: v => { let d = v.replace(/\D/g, ''); if (d.startsWith('00')) d = d.slice(2); else if (d.startsWith('0')) d = '90' + d.slice(1); else if (d.length === 10) d = '90' + d; return 'https://wa.me/' + d; } },
+  email:     { name: 'E-posta',   icon: 'mail',  href: v => 'mailto:' + v.trim() },
+  instagram: { name: 'Instagram', icon: 'insta', href: v => /^https?:/i.test(v.trim()) ? v.trim() : 'https://instagram.com/' + v.trim().replace(/^@/, '') },
+  facebook:  { name: 'Facebook',  icon: 'fb',    href: v => /^https?:/i.test(v.trim()) ? v.trim() : 'https://facebook.com/' + v.trim().replace(/^@/, '') },
+  website:   { name: 'Web sitesi', icon: 'link', href: v => /^https?:/i.test(v.trim()) ? v.trim() : 'https://' + v.trim() },
+  other:     { name: 'Diğer',     icon: 'link',  href: v => /^https?:\/\//i.test(v.trim()) ? v.trim() : '' }
+};
+function contactHref(c) { const t = CONTACT_TYPES[c.type] || CONTACT_TYPES.other; return (c.value || '').trim() ? t.href(c.value) : ''; }
+
+/* ---------- site gösterimi ---------- */
+function paragraphs(t) {
+  return String(t || '').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean).map(p => '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>').join('');
+}
+function primaryContacts() {
+  if (!S.contacts.enabled) return {};
+  const it = S.contacts.items.filter(c => (c.value || '').trim());
+  return { phone: it.find(c => c.type === 'phone'), wa: it.find(c => c.type === 'whatsapp') };
+}
+function mapSrc(loc) {
+  const m = /src=["']([^"']+)["']/i.exec(loc.embed || '');
+  const src = (m ? m[1] : (loc.embed || '').trim()).replace(/&amp;/g, '&');
+  if (/^https:\/\/www\.google\.com\/maps\/embed/i.test(src)) return src;
+  const q = (loc.address || loc.name || '').trim();
+  return q ? 'https://maps.google.com/maps?q=' + encodeURIComponent(q) + '&output=embed' : '';
+}
+
+function secWrap(title, inner, i) { return '<section class="sec' + (i % 2 ? ' alt' : '') + '"><div class="wrap"><h2>' + esc(title) + '</h2>' + inner + '</div></section>'; }
+
+function renderSite(page) {
+  const root = $('#site'), sec = page.show, pc = primaryContacts();
+  const menu = S.pages.filter(p => p.menu);
+  const first = S.pages[0];
+  const href = p => '#/' + (p === first ? '' : p.slug);
+  const brand = S.logoUrl ? '<img src="' + esc(S.logoUrl) + '" alt="' + esc(S.company.name) + '">' : esc(S.company.name);
+  let h = '<header class="top"><div class="wrap bar"><a class="brand" href="#/">' + brand + '</a>';
+  if (menu.length > 1) {
+    h += '<button type="button" class="burger" data-burger aria-label="Menü" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">' + ICON.menu + '</svg></button>';
+    h += '<nav class="nav" id="nav">' + menu.map(p => '<a href="' + href(p) + '"' + (p === page ? ' class="on"' : '') + '>' + esc(p.title) + '</a>').join('') + '</nav>';
+  }
+  h += '</div></header><main>';
+
+  if (sec.hero) {
+    h += '<div class="hero"><div class="wrap"><span class="tag"></span><h1>' + esc(page.heroTitle || page.title) + '</h1>';
+    if (page.heroText) h += '<p>' + esc(page.heroText) + '</p>';
+    if (pc.phone || pc.wa) {
+      h += '<div class="acts">';
+      if (pc.phone) h += '<a class="btn" href="' + esc(contactHref(pc.phone)) + '">' + ico('phone') + ' Hemen Ara</a>';
+      if (pc.wa) h += '<a class="btn ghost" href="' + esc(contactHref(pc.wa)) + '" target="_blank" rel="noopener">' + ico('chat') + ' WhatsApp</a>';
+      h += '</div>';
+    }
+    h += '</div></div>';
+  }
+
+  let n = 0;
+  if (sec.body && (page.body || page.bodyTitle)) {
+    h += secWrap(page.bodyTitle || page.title, '<div class="prose">' + paragraphs(page.body) + '</div>', n++);
+  }
+  if (sec.products && S.products.enabled && S.products.items.length) {
+    h += secWrap(S.products.title, '<div class="cards">' + S.products.items.map(p =>
+      '<div class="card"><h3>' + esc(p.name) + '</h3>' + (p.desc ? '<p>' + esc(p.desc) + '</p>' : '') +
+      (S.products.showPrice && p.price ? '<div class="price">' + esc(p.price) + '</div>' : '') + '</div>').join('') + '</div>', n++);
+  }
+  if (sec.gallery && S.gallery.enabled) h += secWrap(S.gallery.title, galleryHTML(), n++);
+  if (sec.hours && S.hours.enabled && S.hours.items.length) {
+    h += secWrap(S.hours.title, '<div class="hours">' + S.hours.items.map(r => '<div class="hrow"><b>' + esc(r.day) + '</b><span>' + esc(r.time) + '</span></div>').join('') + '</div>', n++);
+  }
+  if (sec.testimonials && S.testimonials.enabled && S.testimonials.items.length) {
+    h += secWrap(S.testimonials.title, '<div class="cards">' + S.testimonials.items.map(t =>
+      '<div class="card q"><p>' + esc(t.text) + '</p>' + (t.name ? '<cite>' + esc(t.name) + '</cite>' : '') + '</div>').join('') + '</div>', n++);
+  }
+  if (sec.locations && S.locations.enabled && S.locations.items.length) {
+    const L = S.locations.items;
+    h += secWrap(S.locations.title, '<div class="locs' + (L.length > 1 ? ' two' : '') + '">' + L.map(l => {
+      const src = mapSrc(l), dest = (l.address || l.name || '').trim();
+      return '<div class="loc"><h3>' + esc(l.name) + '</h3>' + (l.address ? '<p class="addr">' + esc(l.address) + '</p>' : '') +
+        (src ? '<iframe class="map" src="' + esc(src) + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="' + esc(l.name) + ' haritası"></iframe>' : '') +
+        (dest ? '<a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(dest) + '">' + ico('pin') + ' Yol tarifi al</a>' : '') + '</div>';
+    }).join('') + '</div>', n++);
+  }
+  if (sec.contact && S.contacts.enabled) {
+    const rows = S.contacts.items.filter(c => (c.value || '').trim());
+    if (rows.length) h += secWrap(S.contacts.title, '<div class="clist">' + rows.map(c => {
+      const t = CONTACT_TYPES[c.type] || CONTACT_TYPES.other, link = contactHref(c);
+      const inner = ico(t.icon) + '<span><small>' + esc(c.label || t.name) + '</small><strong>' + esc(c.value) + '</strong></span>';
+      return link ? '<a class="crow" href="' + esc(link) + '"' + (/^https?:/.test(link) ? ' target="_blank" rel="noopener"' : '') + '>' + inner + '</a>' : '<div class="crow">' + inner + '</div>';
+    }).join('') + '</div>', n++);
+  }
+  h += '</main><footer><div class="wrap">' + esc(S.company.footer) + '<br><a class="adm-link" href="#/yonetici">Yönetici</a></div></footer>';
+  if (pc.phone || pc.wa) {
+    h += '<div class="mbar">' + (pc.phone ? '<a href="' + esc(contactHref(pc.phone)) + '">' + ico('phone') + ' Ara</a>' : '') +
+      (pc.wa ? '<a class="wa" href="' + esc(contactHref(pc.wa)) + '" target="_blank" rel="noopener">' + ico('chat') + ' WhatsApp</a>' : '') + '</div>';
+  }
+  root.innerHTML = h;
+  document.body.classList.toggle('has-mbar', !!(pc.phone || pc.wa));
+  document.title = page === first ? S.company.name : page.title + ' | ' + S.company.name;
+  const md = document.querySelector('meta[name=description]'); if (md) md.content = S.company.description || '';
+  applyTheme(S);
+  initSliders();
+}
+
+function galleryHTML() {
+  const P = S.photos;
+  if (!P.length) return '<div class="grid">' + [1, 2, 3, 4].map(() => '<div class="ph-empty">Fotoğraflar buraya gelecek</div>').join('') + '</div>';
+  const btn = (p, i) => '<button type="button" class="ph-btn" data-open="' + i + '" aria-label="Büyüt"><img src="' + esc(p.url) + '" alt="' + esc(p.caption || '') + '" loading="lazy"></button>';
+  if (S.gallery.mode === 'slider') {
+    return '<div class="slider" data-slider><div class="track">' + P.map((p, i) => '<div class="slide">' + btn(p, i) + '</div>').join('') +
+      '</div><button type="button" class="sl-b sl-prev" aria-label="Önceki">&lsaquo;</button><button type="button" class="sl-b sl-next" aria-label="Sonraki">&rsaquo;</button><div class="dots"></div></div>';
+  }
+  return '<div class="grid">' + P.map((p, i) => btn(p, i)).join('') + '</div>';
+}
+function initSliders() {
+  document.querySelectorAll('[data-slider]').forEach(el => {
+    const tr = $('.track', el), dots = $('.dots', el), n = tr.children.length;
+    dots.innerHTML = Array.from({ length: n }, (_, i) => '<button type="button" data-d="' + i + '" aria-label="Fotoğraf ' + (i + 1) + '"></button>').join('');
+    const upd = () => { const i = Math.round(tr.scrollLeft / (tr.clientWidth || 1)); Array.from(dots.children).forEach((d, k) => d.classList.toggle('on', k === i)); };
+    tr.addEventListener('scroll', () => requestAnimationFrame(upd));
+    $('.sl-prev', el).onclick = () => tr.scrollBy({ left: -tr.clientWidth, behavior: 'smooth' });
+    $('.sl-next', el).onclick = () => tr.scrollBy({ left: tr.clientWidth, behavior: 'smooth' });
+    dots.onclick = e => { const b = e.target.closest('[data-d]'); if (b) tr.scrollTo({ left: +b.dataset.d * tr.clientWidth, behavior: 'smooth' }); };
+    upd();
+  });
+}
+
+/* ---------- büyük fotoğraf ---------- */
+const LB = { i: 0 };
+function lbShow() { const p = S.photos[LB.i]; if (!p) return; const b = $('#lightbox'); $('img', b).src = p.url; $('img', b).alt = p.caption || ''; $('.lb-cap', b).textContent = p.caption || ''; }
+function lbMove(d) { const n = S.photos.length; if (!n) return; LB.i = (LB.i + d + n) % n; lbShow(); }
+function lbClose() { $('#lightbox').hidden = true; }
+document.addEventListener('keydown', e => {
+  if ($('#lightbox').hidden) return;
+  if (e.key === 'Escape') lbClose(); else if (e.key === 'ArrowLeft') lbMove(-1); else if (e.key === 'ArrowRight') lbMove(1);
+});
+$('#lightbox').addEventListener('click', e => {
+  const a = e.target.closest('[data-lb]'); if (a) { const k = a.dataset.lb; if (k === 'close') lbClose(); else lbMove(k === 'prev' ? -1 : 1); }
+  else if (e.target.id === 'lightbox') lbClose();
+});
+$('#site').addEventListener('click', e => {
+  const o = e.target.closest('[data-open]'); if (o) { LB.i = +o.dataset.open; $('#lightbox').hidden = false; lbShow(); return; }
+  const b = e.target.closest('[data-burger]');
+  if (b) { const nav = $('#nav'); const open = nav.classList.toggle('open'); b.setAttribute('aria-expanded', open); return; }
+  if (e.target.closest('#nav a')) $('#nav').classList.remove('open');
+});
+
+/* ---------- yönlendirme ve veri yükleme ---------- */
+const currentSlug = () => { try { return decodeURIComponent(location.hash.replace(/^#\/?/, '')); } catch (e) { return ''; } };
+function route(keepScroll) {
+  const h = currentSlug();
+  if (h === 'yonetici') { showAdmin(); return; }
+  $('#admin').hidden = true; $('#site').hidden = false; document.body.classList.remove('adm-open');
+  if (!S) { renderStatus(); return; }
+  renderSite(S.pages.find(p => p.slug === h) || S.pages[0]);
+  if (!keepScroll) window.scrollTo(0, 0);
+}
+function renderStatus() {
+  $('#site').innerHTML = loadError
+    ? '<div class="center-msg">Site içeriği şu anda yüklenemedi. Lütfen birkaç dakika sonra tekrar deneyin.<br><br><a href="#/yonetici">Yönetici</a></div>'
+    : '<div class="center-msg">Yükleniyor…</div>';
+}
+window.addEventListener('hashchange', () => route());
+
+const readCache = () => { try { return JSON.parse(localStorage.getItem(CACHE_KEY)); } catch (e) { return null; } };
+const writeCache = v => { try { localStorage.setItem(CACHE_KEY, JSON.stringify(v)); } catch (e) { /* önemli değil */ } };
+function withTimeout(p, ms) { return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('zaman aşımı')), ms))]); }
+
+async function init() {
+  if (!configured) { S = normalize(null); route(); return; }
+  const cached = readCache();
+  if (cached) { S = normalize(cached); applyTheme(S); } else renderStatus();
+  route();
+  try {
+    if (!sb) throw new Error('Supabase yüklenemedi');
+    const { data, error } = await withTimeout(sb.from('site_data').select('value').eq('key', 'settings').maybeSingle(), 9000);
+    if (error) throw error;
+    const fresh = normalize(data ? data.value : null);
+    const changed = JSON.stringify(fresh) !== JSON.stringify(S);
+    S = fresh; loadError = false; writeCache(data ? data.value : null);
+    if (changed || !cached) route(true);
+  } catch (e) {
+    console.warn('Veri okunamadı:', e);
+    if (!S) { loadError = true; route(); }
+  }
+}
+
+/* ==========================================================================
+   YÖNETİCİ PANELİ
+   ========================================================================== */
+const adm = { tab: 'genel', draft: null, dirty: false, pending: [], session: null, checked: false, starting: false, pageIdx: 0 };
+const TABS = [['genel', 'Genel'], ['foto', 'Fotoğraflar'], ['sayfa', 'Sayfalar'], ['tema', 'Tema'], ['yazi', 'Yazılar'], ['konum', 'Konumlar'], ['iletisim', 'İletişim'], ['logo', 'Logo'], ['ek', 'Ek Bölümler']];
+
+const f = {
+  text: (l, p, v, o) => { o = o || {}; return '<label class="fld"><span>' + l + '</span><input type="' + (o.type || 'text') + '" data-bind="' + p + '" value="' + esc(v) + '"' + (o.ph ? ' placeholder="' + esc(o.ph) + '"' : '') + '>' + (o.hint ? '<small>' + o.hint + '</small>' : '') + '</label>'; },
+  area: (l, p, v, rows, hint) => '<label class="fld"><span>' + l + '</span><textarea rows="' + (rows || 4) + '" data-bind="' + p + '">' + esc(v) + '</textarea>' + (hint ? '<small>' + hint + '</small>' : '') + '</label>',
+  check: (l, p, v) => '<label class="chk"><input type="checkbox" data-bind="' + p + '"' + (v ? ' checked' : '') + '><span>' + l + '</span></label>',
+  select: (l, p, v, opts) => '<label class="fld"><span>' + l + '</span><select data-bind="' + p + '">' + opts.map(o => '<option value="' + esc(o[0]) + '"' + (o[0] === v ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select></label>'
+};
+const rowBtns = (list, i, n, extra) =>
+  '<div class="a-row">' +
+  (i > 0 ? '<button type="button" class="a-btn" data-act="up" data-list="' + list + '" data-i="' + i + '">▲ Yukarı</button>' : '') +
+  (i < n - 1 ? '<button type="button" class="a-btn" data-act="down" data-list="' + list + '" data-i="' + i + '">▼ Aşağı</button>' : '') +
+  '<button type="button" class="a-btn dng" data-act="del" data-list="' + list + '" data-i="' + i + '">Sil</button>' + (extra || '') + '</div>';
+const addBtn = (list, label) => '<button type="button" class="a-btn pri big" data-act="add" data-list="' + list + '">+ ' + label + '</button>';
+
+/* ---------- ekranlar ---------- */
+function showAdmin() {
+  if (!S) S = normalize(null);
+  $('#site').hidden = true; $('#admin').hidden = false; document.body.classList.add('adm-open');
+  document.title = 'Yönetici';
+  renderAdmin();
+}
+function renderAdmin() {
+  const root = $('#admin');
+  if (!sb) {
+    root.innerHTML = '<div class="a-login"><form><h1>Yönetici Girişi</h1><p>' + (configured
+      ? 'Bağlantı kütüphanesi yüklenemedi. İnternetinizi kontrol edip sayfayı yenileyin.'
+      : 'Giriş sistemi henüz bağlanmadı. Kurulum rehberinin 2. adımı (Supabase) bittiğinde burası çalışacak.') + '</p><a href="#/">&larr; Siteye dön</a></form></div>';
+    return;
+  }
+  if (!adm.checked) { root.innerHTML = '<div class="a-login"><p>Kontrol ediliyor…</p></div>'; return; }
+  if (!adm.session) {
+    root.innerHTML = '<div class="a-login"><form id="loginForm"><h1>Yönetici Girişi</h1>' +
+      '<label class="fld"><span>E-posta</span><input name="email" type="email" autocomplete="username" required></label>' +
+      '<label class="fld"><span>Şifre</span><input name="password" type="password" autocomplete="current-password" required></label>' +
+      '<button class="a-btn pri big" type="submit">Giriş yap</button><p class="msg" id="loginMsg"></p><a href="#/">&larr; Siteye dön</a></form></div>';
+    return;
+  }
+  if (!adm.draft) { startDraft(); return; }
+  root.innerHTML =
+    '<div class="a-top"><b>Yönetim Paneli</b><span><a class="a-link" href="#/">Siteyi Gör</a> <button type="button" class="a-link" data-act="logout">Çıkış</button></span></div>' +
+    '<nav class="a-nav" id="a-nav"></nav><div class="a-main" id="a-main"></div>' +
+    '<div class="a-save"><span id="a-state"></span><button type="button" class="a-btn pri big" id="a-savebtn" data-act="save">KAYDET</button></div>';
+  renderTab(); updateDirty();
+}
+async function startDraft() {
+  if (adm.starting) return; adm.starting = true;
+  const root = $('#admin');
+  root.innerHTML = '<div class="a-login"><p>Panel hazırlanıyor…</p></div>';
+  try {
+    const { data, error } = await withTimeout(sb.from('site_data').select('value').eq('key', 'settings').maybeSingle(), 9000);
+    if (error) throw error;
+    S = normalize(data ? data.value : null); adm.draft = clone(S); adm.dirty = false; adm.pending = [];
+    adm.starting = false; renderAdmin();
+  } catch (e) {
+    adm.starting = false;
+    root.innerHTML = '<div class="a-login"><form><h1>Bağlanılamadı</h1><p>Mevcut içerik okunamadı. Yanlışlıkla üzerine yazmamak için paneli açmıyorum. Sebep: ' + esc(e.message || e) + '</p>' +
+      '<button type="button" class="a-btn pri big" data-act="retry">Tekrar dene</button><br><button type="button" class="a-btn" style="margin-top:12px;width:100%" data-act="logout">Çıkış</button></form></div>';
+  }
+}
+function renderTab() {
+  const d = adm.draft; if (!d) return;
+  $('#a-nav').innerHTML = TABS.map(t => '<button type="button" data-act="tab" data-k="' + t[0] + '" class="' + (adm.tab === t[0] ? 'on' : '') + '">' + t[1] + '</button>').join('');
+  const fn = { genel: tabGenel, foto: tabFoto, sayfa: tabSayfa, tema: tabTema, yazi: tabYazi, konum: tabKonum, iletisim: tabIletisim, logo: tabLogo, ek: tabEk }[adm.tab];
+  $('#a-main').innerHTML = fn(d);
+  if (adm.tab === 'tema') renderPreview();
+}
+function markDirty() { adm.dirty = true; updateDirty(); }
+function updateDirty() {
+  const s = $('#a-state'); if (!s) return;
+  s.textContent = adm.dirty ? 'Kaydedilmemiş değişiklik var' : 'Tüm değişiklikler kaydedildi';
+  s.className = adm.dirty ? 'dirty' : 'ok';
+}
+window.addEventListener('beforeunload', e => { if (adm.dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+/* ---------- sekmeler ---------- */
+function tabGenel(d) {
+  return '<h2>Genel Bilgiler</h2><p class="a-help">Değişiklik yaptıktan sonra aşağıdaki turuncu <b>KAYDET</b> düğmesine basın, site hemen güncellenir.</p>' +
+    '<div class="a-card"><h3>Firma</h3>' +
+    f.text('Firma adı', 'company.name', d.company.name, { hint: 'Logo yüklemezseniz sitenin üstünde bu ad görünür.' }) +
+    f.area('Site açıklaması', 'company.description', d.company.description, 3, 'Google aramasında çıkan kısa yazı.') +
+    f.text('Sayfa altı yazısı', 'company.footer', d.company.footer) + '</div>' +
+    '<div class="a-card"><h3>Şifreyi değiştir</h3><label class="fld"><span>Yeni şifre (en az 8 karakter)</span><input type="password" id="newpass" autocomplete="new-password"></label>' +
+    '<button type="button" class="a-btn" data-act="chpass">Şifreyi değiştir</button><p class="msg" id="passmsg"></p></div>';
+}
+
+function tabFoto(d) {
+  const P = d.photos;
+  return '<h2>Fotoğraflar</h2><p class="a-help">Fotoğrafları yükleyin, sırasını ▲ ▼ ile değiştirin, en altta KAYDET’e basın. Fotoğraflar yüklenirken otomatik küçültülür.</p>' +
+    '<div class="a-card"><h3>Galeri</h3>' + f.check('Galeri bölümü sitede görünsün', 'gallery.enabled', d.gallery.enabled) +
+    f.text('Galeri başlığı', 'gallery.title', d.gallery.title) +
+    '<h3 style="margin-top:8px">Galeri görünümü</h3>' +
+    '<label class="opt"><input type="radio" name="gm" data-bind="gallery.mode" value="slider"' + (d.gallery.mode === 'slider' ? ' checked' : '') + '><span>Slayt<small>Fotoğraflar tek tek, yana kaydırılarak görünür.</small></span></label>' +
+    '<label class="opt"><input type="radio" name="gm" data-bind="gallery.mode" value="grid"' + (d.gallery.mode !== 'slider' ? ' checked' : '') + '><span>Klasik ızgara<small>Küçük kareler halinde hepsi bir arada görünür.</small></span></label></div>' +
+    '<div class="a-card"><h3>Fotoğraf ekle</h3><label class="a-btn pri big" for="ph-file" style="display:flex">+ Fotoğraf yükle</label>' +
+    '<input type="file" id="ph-file" accept="image/*" multiple hidden><p class="msg" id="upmsg"></p></div>' +
+    '<h3>Yüklü fotoğraflar (' + P.length + ')</h3>' +
+    (P.length ? P.map((p, i) => '<div class="item"><div class="ph"><img src="' + esc(p.url) + '" alt="">' +
+      f.text('Açıklama (isteğe bağlı)', 'photos.' + i + '.caption', p.caption || '') + '</div>' + rowBtns('photos', i, P.length) + '</div>').join('') : '<p class="a-help">Henüz fotoğraf yok.</p>');
+}
+
+function tabSayfa(d) {
+  const n = d.pages.length;
+  return '<h2>Sayfalar</h2><p class="a-help">Sayfa ekleyin, silin, adını değiştirin, menüde gösterin veya gizleyin. Menüde 2 veya daha fazla sayfa görünürse sitenin üstünde menü otomatik açılır. İlk sıradaki sayfa ana sayfadır. Sayfanın içeriğini “Yazılar” sekmesinde düzenlersiniz.</p>' +
+    d.pages.map((p, i) => '<div class="item">' + f.text('Sayfa adı', 'pages.' + i + '.title', p.title) + f.check('Menüde göster', 'pages.' + i + '.menu', p.menu) +
+      rowBtns('pages', i, n) + '</div>').join('') +
+    addBtn('pages', 'Yeni sayfa ekle');
+}
+
+function tabTema(d) {
+  const t = d.theme;
+  let h = '<h2>Tema</h2><p class="a-help">Sitenin renklerini buradan seçin. Aşağıdaki önizlemede nasıl görüneceğini görürsünüz; sitede görmek için KAYDET’e basın.</p>' +
+    '<div class="a-card"><h3>Hazır temalar</h3><div class="sw">' +
+    Object.keys(THEMES).map(k => '<button type="button" class="swb' + (!t.custom && t.preset === k ? ' on' : '') + '" data-act="preset" data-k="' + k + '"><i style="background:' + THEMES[k].accent + '"></i><i style="background:' + THEMES[k].dark.bg + '"></i><span>' + THEMES[k].name + '</span></button>').join('') + '</div>' +
+    f.select('Açık / koyu', 'theme.mode', t.mode, [['dark', 'Koyu tema'], ['light', 'Açık tema']]) +
+    '<small style="color:#5d676e">Açık/koyu seçimi hazır temalar için geçerlidir.</small></div>' +
+    '<div class="a-card"><h3>Özel renkler</h3>' + f.check('Kendi renklerimi seçmek istiyorum', 'theme.custom', t.custom);
+  if (t.custom) {
+    h += f.text('Vurgu rengi (düğmeler, çizgiler)', 'theme.accent', t.accent, { type: 'color' }) +
+      f.text('Arka plan rengi', 'theme.bg', t.bg, { type: 'color' }) +
+      f.text('Kutu (kart) rengi', 'theme.surface', t.surface, { type: 'color' }) +
+      f.text('Yazı rengi', 'theme.text', t.text, { type: 'color' });
+  }
+  return h + '</div><div class="a-card"><h3>Önizleme</h3><div id="pv"></div></div>';
+}
+function renderPreview() {
+  const el = $('#pv'); if (!el || !adm.draft) return;
+  const c = themeColors(adm.draft.theme);
+  el.innerHTML = '<div style="background:' + c.bg + ';color:' + c.text + ';padding:14px;border-radius:6px;border:1px solid ' + c.line + '">' +
+    '<div style="border-bottom:4px solid ' + c.accent + ';padding-bottom:10px;margin-bottom:12px;font-weight:800;text-transform:uppercase">' + esc(adm.draft.company.name) + '</div>' +
+    '<div style="background:' + c.surface + ';border-left:5px solid ' + c.accent + ';padding:12px;margin-bottom:12px"><b>Örnek ürün kartı</b><div style="color:' + c.muted + '">Açıklama yazısı böyle görünür.</div><div style="color:' + c.accentText + ';font-weight:800;margin-top:6px">Fiyat için arayın</div></div>' +
+    '<span style="display:inline-block;background:' + c.accent + ';color:' + c.onAccent + ';padding:12px 18px;border-radius:3px;font-weight:700">Hemen Ara</span></div>';
+}
+
+function tabYazi(d) {
+  if (adm.pageIdx >= d.pages.length) adm.pageIdx = 0;
+  const i = adm.pageIdx, p = d.pages[i], b = 'pages.' + i + '.', sh = p.show;
+  const labels = [['hero', 'Üst büyük başlık alanı'], ['body', 'Yazı bölümü'], ['products', 'Ürün listesi'], ['gallery', 'Galeri'], ['hours', 'Çalışma saatleri'], ['testimonials', 'Müşteri yorumları'], ['locations', 'Konumlar'], ['contact', 'İletişim bilgileri']];
+  return '<h2>Yazılar</h2><p class="a-help">Düzenlemek istediğiniz sayfayı seçin.</p>' +
+    '<div class="a-card"><label class="fld"><span>Sayfa</span><select id="pgsel">' + d.pages.map((q, k) => '<option value="' + k + '"' + (k === i ? ' selected' : '') + '>' + esc(q.title) + '</option>').join('') + '</select></label></div>' +
+    '<div class="a-card"><h3>Üst büyük başlık alanı</h3>' + f.text('Başlık', b + 'heroTitle', p.heroTitle) + f.area('Kısa tanıtım yazısı', b + 'heroText', p.heroText, 3) + '</div>' +
+    '<div class="a-card"><h3>Yazı bölümü</h3>' + f.text('Bölüm başlığı', b + 'bodyTitle', p.bodyTitle) + f.area('Metin', b + 'body', p.body, 9, 'Yeni paragraf için bir satır boş bırakın.') + '</div>' +
+    '<div class="a-card"><h3>Bu sayfada hangi bölümler görünsün?</h3>' + labels.map(l => f.check(l[1], b + 'show.' + l[0], sh[l[0]])).join('') +
+    '<small style="color:#5d676e">Ürün, saat, yorum gibi bölümler “Ek Bölümler” sekmesinden ayrıca tamamen kapatılabilir.</small></div>';
+}
+
+function tabKonum(d) {
+  const L = d.locations.items;
+  return '<h2>Konumlar</h2><p class="a-help">Birden fazla konum ekleyebilirsiniz. Her konumun altında otomatik “Yol tarifi al” düğmesi çıkar.</p>' +
+    '<div class="a-card">' + f.check('Konumlar bölümü sitede görünsün', 'locations.enabled', d.locations.enabled) + f.text('Bölüm başlığı', 'locations.title', d.locations.title) + '</div>' +
+    L.map((l, i) => '<div class="item">' + f.text('Konum adı', 'locations.items.' + i + '.name', l.name) +
+      f.text('Adres', 'locations.items.' + i + '.address', l.address, { hint: 'Yol tarifi ve (gömme kodu boşsa) harita bu adresten yapılır.' }) +
+      f.area('Google Haritalar gömme kodu (isteğe bağlı)', 'locations.items.' + i + '.embed', l.embed, 3, 'Google Haritalar’da yeri açın → Paylaş → Harita yerleştir → HTML’yi kopyala → buraya yapıştırın. Boş bırakırsanız adresten harita gösterilir.') +
+      rowBtns('locations.items', i, L.length) + '</div>').join('') + addBtn('locations.items', 'Konum ekle');
+}
+
+function tabIletisim(d) {
+  const C = d.contacts.items;
+  const hint = { phone: 'Örnek: 0 532 000 00 00. Dokununca telefon arar.', whatsapp: 'Telefon numarası. Dokununca WhatsApp sohbeti açılır. Başında 0 ile yazabilirsiniz.', email: 'Örnek: info@firma.com', instagram: 'Kullanıcı adı (örn. firmaadi) veya tam bağlantı.', facebook: 'Sayfa adı veya tam bağlantı.', website: 'Örnek: www.firma.com', other: 'Yazı olarak görünür. https:// ile başlarsa bağlantı olur.' };
+  return '<h2>İletişim</h2><p class="a-help">İstediğiniz kadar iletişim bilgisi ekleyin; adını ve değerini istediğiniz gibi yazın. İlk telefon ve ilk WhatsApp numarası sitenin üstünde ve telefonda altta sabit düğme olarak da görünür.</p>' +
+    '<div class="a-card">' + f.check('İletişim bölümü ve düğmeler sitede görünsün', 'contacts.enabled', d.contacts.enabled) + f.text('Bölüm başlığı', 'contacts.title', d.contacts.title) + '</div>' +
+    C.map((c, i) => '<div class="item">' + f.select('Tür', 'contacts.items.' + i + '.type', c.type, Object.keys(CONTACT_TYPES).map(k => [k, CONTACT_TYPES[k].name])) +
+      f.text('Görünen ad', 'contacts.items.' + i + '.label', c.label) +
+      f.text('Değer', 'contacts.items.' + i + '.value', c.value, { hint: hint[c.type] || '' }) + rowBtns('contacts.items', i, C.length) + '</div>').join('') + addBtn('contacts.items', 'İletişim bilgisi ekle');
+}
+
+function tabLogo(d) {
+  return '<h2>Logo</h2><p class="a-help">Logo yüklerseniz sitenin sol üstünde görünür. Yüklemezseniz firma adı yazı olarak görünür. Şeffaf arka planlı PNG en iyisidir.</p>' +
+    '<div class="a-card"><h3>Şu anki logo</h3>' +
+    (d.logoUrl ? '<div class="ph"><img src="' + esc(d.logoUrl) + '" alt="" style="width:auto;max-width:220px;height:auto;max-height:90px;background:#ccc;padding:6px"></div>' : '<p class="a-help">Logo yüklenmemiş.</p>') +
+    '<div class="a-row"><label class="a-btn pri big" for="logo-file">' + (d.logoUrl ? 'Logoyu değiştir' : '+ Logo yükle') + '</label><input type="file" id="logo-file" accept="image/*" hidden>' +
+    (d.logoUrl ? '<button type="button" class="a-btn dng big" data-act="dellogo">Logoyu kaldır</button>' : '') + '</div><p class="msg" id="logomsg"></p></div>';
+}
+
+function tabEk(d) {
+  const H = d.hours.items, P = d.products.items, T = d.testimonials.items;
+  return '<h2>Ek Bölümler</h2><p class="a-help">Her bölümü buradan açıp kapatabilirsiniz. Kapalı bölüm sitede hiç görünmez.</p>' +
+    '<div class="a-card"><h3>Çalışma saatleri</h3>' + f.check('Sitede göster', 'hours.enabled', d.hours.enabled) + f.text('Bölüm başlığı', 'hours.title', d.hours.title) +
+    H.map((r, i) => '<div class="item">' + f.text('Gün', 'hours.items.' + i + '.day', r.day, { ph: 'Pazartesi - Cuma' }) + f.text('Saat', 'hours.items.' + i + '.time', r.time, { ph: '08:30 - 18:00' }) + rowBtns('hours.items', i, H.length) + '</div>').join('') +
+    addBtn('hours.items', 'Satır ekle') + '</div>' +
+    '<div class="a-card"><h3>Ürün / fiyat listesi</h3>' + f.check('Sitede göster', 'products.enabled', d.products.enabled) + f.check('Fiyatları göster', 'products.showPrice', d.products.showPrice) + f.text('Bölüm başlığı', 'products.title', d.products.title) +
+    P.map((p, i) => '<div class="item">' + f.text('Ürün adı', 'products.items.' + i + '.name', p.name) + f.area('Açıklama', 'products.items.' + i + '.desc', p.desc, 3) + f.text('Fiyat / not', 'products.items.' + i + '.price', p.price, { ph: 'Örn: 1.250 ₺ veya Fiyat için arayın' }) + rowBtns('products.items', i, P.length) + '</div>').join('') +
+    addBtn('products.items', 'Ürün ekle') + '</div>' +
+    '<div class="a-card"><h3>Müşteri yorumları</h3>' + f.check('Sitede göster', 'testimonials.enabled', d.testimonials.enabled) + f.text('Bölüm başlığı', 'testimonials.title', d.testimonials.title) +
+    T.map((t, i) => '<div class="item">' + f.text('Müşteri adı', 'testimonials.items.' + i + '.name', t.name) + f.area('Yorum', 'testimonials.items.' + i + '.text', t.text, 3) + rowBtns('testimonials.items', i, T.length) + '</div>').join('') +
+    addBtn('testimonials.items', 'Yorum ekle') + '</div>' +
+    '<div class="a-card"><h3>Diğer bölümler</h3>' + f.check('Galeri (Fotoğraflar sekmesinde düzenlenir)', 'gallery.enabled', d.gallery.enabled) + f.check('Konumlar (Konumlar sekmesinde düzenlenir)', 'locations.enabled', d.locations.enabled) + f.check('İletişim (İletişim sekmesinde düzenlenir)', 'contacts.enabled', d.contacts.enabled) + '</div>';
+}
+
+/* ---------- alan değişiklikleri ---------- */
+function afterChange(path, v, old) {
+  if (path.startsWith('theme.')) {
+    if (path === 'theme.custom') {
+      if (v) { const c = themeColors(Object.assign({}, adm.draft.theme, { custom: false })); Object.assign(adm.draft.theme, { accent: c.accent, bg: c.bg, surface: c.surface, text: c.text }); }
+      renderTab();
+    } else renderPreview();
+    return;
+  }
+  if (/^pages\.\d+\.title$/.test(path)) {
+    const idx = +path.split('.')[1], used = new Set(adm.draft.pages.filter((_, k) => k !== idx).map(p => p.slug));
+    adm.draft.pages[idx].slug = uniqueSlug(v || 'sayfa', used);
+    return;
+  }
+  if (/^contacts\.items\.\d+\.type$/.test(path)) {
+    const it = getPath(adm.draft, path.replace(/\.type$/, '')), oldName = (CONTACT_TYPES[old] || {}).name;
+    if (!it.label || it.label === oldName) it.label = CONTACT_TYPES[v].name;
+    renderTab();
+  }
+}
+function onField(e) {
+  const t = e.target, path = t.dataset && t.dataset.bind;
+  if (t.id === 'pgsel' && e.type === 'change') { adm.pageIdx = +t.value; renderTab(); return; }
+  if (!path || !adm.draft) return;
+  const discrete = t.type === 'checkbox' || t.type === 'radio' || t.tagName === 'SELECT';
+  if (e.type === 'input' && discrete) return;
+  if (e.type === 'change' && !discrete) return;
+  if (t.type === 'radio' && !t.checked) return;
+  const v = t.type === 'checkbox' ? t.checked : t.value;
+  const old = getPath(adm.draft, path);
+  setPath(adm.draft, path, v); markDirty(); afterChange(path, v, old);
+}
+
+/* ---------- fotoğraf yükleme ---------- */
+function prepareImage(file, max, keepPng) {
+  return new Promise((res, rej) => {
+    if (file.type === 'image/svg+xml' && keepPng) return res(file);
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const sc = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const w = Math.max(1, Math.round(img.naturalWidth * sc)), h = Math.max(1, Math.round(img.naturalHeight * sc));
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const x = c.getContext('2d'), png = keepPng && file.type === 'image/png';
+      if (!png) { x.fillStyle = '#ffffff'; x.fillRect(0, 0, w, h); }
+      x.drawImage(img, 0, 0, w, h);
+      c.toBlob(b => b ? res(b) : rej(new Error('Görsel işlenemedi')), png ? 'image/png' : 'image/jpeg', .85);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Bu dosya görsel olarak açılamadı: ' + file.name)); };
+    img.src = url;
+  });
+}
+async function uploadImage(file, folder, max, keepPng) {
+  const blob = await prepareImage(file, max, keepPng);
+  const ext = blob.type === 'image/png' ? 'png' : blob.type === 'image/svg+xml' ? 'svg' : 'jpg';
+  const path = folder + '/' + Date.now() + '-' + uid() + '.' + ext;
+  const { error } = await sb.storage.from(BUCKET).upload(path, blob, { contentType: blob.type, cacheControl: '31536000', upsert: false });
+  if (error) throw error;
+  return { path, url: sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl };
+}
+const setMsg = (id, text, cls) => { const m = document.getElementById(id); if (m) { m.textContent = text; m.className = 'msg ' + (cls || ''); } };
+const friendly = e => {
+  const m = String((e && e.message) || e);
+  if (/row-level security|policy|not authorized|permission|JWT/i.test(m)) return 'Yetki hatası: giriş yaptığınız e-posta, kurulum.sql dosyasına yazdığınız yönetici e-postasıyla aynı olmalı.';
+  if (/bucket/i.test(m) && /not found/i.test(m)) return 'Depolama alanı bulunamadı: kurulum.sql dosyasını çalıştırdığınızdan emin olun.';
+  return m;
+};
+
+async function handleUpload(input) {
+  const files = Array.from(input.files || []); input.value = '';
+  if (!files.length) return;
+  let ok = 0;
+  for (let i = 0; i < files.length; i++) {
+    setMsg('upmsg', 'Yükleniyor (' + (i + 1) + '/' + files.length + ')…');
+    try { const r = await uploadImage(files[i], 'galeri', 1600, false); adm.draft.photos.push({ path: r.path, url: r.url, caption: '' }); ok++; }
+    catch (e) { setMsg('upmsg', 'Hata: ' + friendly(e), 'err'); if (ok) markDirty(); renderTabKeepMsg(); return; }
+  }
+  markDirty(); adm.tab = 'foto'; renderTab(); setMsg('upmsg', ok + ' fotoğraf yüklendi. Siteye yansıması için KAYDET’e basın.', 'ok');
+}
+function renderTabKeepMsg() { const t = $('#upmsg') ? $('#upmsg').textContent : ''; renderTab(); setMsg('upmsg', t, 'err'); }
+async function handleLogo(input) {
+  const file = input.files && input.files[0]; input.value = ''; if (!file) return;
+  setMsg('logomsg', 'Yükleniyor…');
+  try {
+    const r = await uploadImage(file, 'logo', 700, true);
+    if (adm.draft.logoPath) adm.pending.push(adm.draft.logoPath);
+    adm.draft.logoPath = r.path; adm.draft.logoUrl = r.url; markDirty(); renderTab(); setMsg('logomsg', 'Logo yüklendi. KAYDET’e basın.', 'ok');
+  } catch (e) { setMsg('logomsg', 'Hata: ' + friendly(e), 'err'); }
+}
+
+/* ---------- kaydet ---------- */
+async function saveAll() {
+  const btn = $('#a-savebtn'); if (!btn || btn.disabled) return;
+  btn.disabled = true; const s = $('#a-state'); s.textContent = 'Kaydediliyor…'; s.className = '';
+  try {
+    const payload = normalize(clone(adm.draft));
+    const { error } = await sb.from('site_data').upsert({ key: 'settings', value: payload, updated_at: new Date().toISOString() });
+    if (error) throw error;
+    S = payload; adm.draft = clone(payload); writeCache(payload); loadError = false;
+    const del = adm.pending.filter(Boolean); adm.pending = [];
+    if (del.length) { try { await sb.storage.from(BUCKET).remove(del); } catch (e) { console.warn(e); } }
+    adm.dirty = false; renderTab(); updateDirty();
+  } catch (e) {
+    s.textContent = 'KAYDEDİLEMEDİ: ' + friendly(e); s.className = 'dirty';
+  }
+  btn.disabled = false;
+}
+
+/* ---------- tıklamalar ---------- */
+const NEW_ITEM = {
+  'hours.items': () => ({ day: '', time: '' }),
+  'products.items': () => ({ id: uid(), name: 'Yeni ürün', desc: '', price: '' }),
+  'testimonials.items': () => ({ id: uid(), name: '', text: '' }),
+  'locations.items': () => ({ id: uid(), name: 'Yeni konum', address: '', embed: '' }),
+  'contacts.items': () => ({ id: uid(), type: 'phone', label: 'Telefon', value: '' })
+};
+async function onClick(e) {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const act = b.dataset.act, list = b.dataset.list, i = +b.dataset.i, d = adm.draft;
+  if (act === 'tab') { adm.tab = b.dataset.k; renderTab(); $('#admin').scrollTop = 0; return; }
+  if (act === 'save') return saveAll();
+  if (act === 'retry') return startDraft();
+  if (act === 'logout') {
+    if (adm.dirty && !confirm('Kaydedilmemiş değişiklikler var. Yine de çıkılsın mı?')) return;
+    try { await sb.auth.signOut(); } catch (er) { /* önemli değil */ }
+    adm.session = null; adm.draft = null; adm.dirty = false; adm.pending = []; renderAdmin(); return;
+  }
+  if (act === 'preset') { d.theme.preset = b.dataset.k; d.theme.custom = false; markDirty(); renderTab(); return; }
+  if (act === 'dellogo') { if (d.logoPath) adm.pending.push(d.logoPath); d.logoPath = ''; d.logoUrl = ''; markDirty(); renderTab(); return; }
+  if (act === 'chpass') {
+    const v = ($('#newpass') || {}).value || '';
+    if (v.length < 8) return setMsg('passmsg', 'Şifre en az 8 karakter olmalı.', 'err');
+    const { error } = await sb.auth.updateUser({ password: v });
+    if (error) return setMsg('passmsg', 'Hata: ' + error.message, 'err');
+    $('#newpass').value = ''; return setMsg('passmsg', 'Şifre değiştirildi.', 'ok');
+  }
+  if (!list) return;
+  const arr = getPath(d, list);
+  if (act === 'add') {
+    if (list === 'pages') {
+      const used = new Set(arr.map(p => p.slug));
+      const p = Object.assign({}, PAGE_BASE, { id: uid(), title: 'Yeni Sayfa', heroTitle: 'Yeni Sayfa', show: Object.assign({}, DEFAULT_SHOW, { products: false, gallery: false, hours: false, testimonials: false, locations: false, contact: false }) });
+      p.slug = uniqueSlug(p.title, used); arr.push(p); adm.pageIdx = arr.length - 1;
+    } else arr.push(NEW_ITEM[list]());
+  } else if (act === 'up' || act === 'down') {
+    const j = act === 'up' ? i - 1 : i + 1; if (j < 0 || j >= arr.length) return;
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  } else if (act === 'del') {
+    if (list === 'pages' && arr.length <= 1) return alert('En az bir sayfa kalmalı.');
+    if (!confirm(list === 'photos' ? 'Bu fotoğraf silinsin mi?' : list === 'pages' ? 'Bu sayfa silinsin mi?' : 'Bu satır silinsin mi?')) return;
+    const [x] = arr.splice(i, 1);
+    if (list === 'photos' && x.path) adm.pending.push(x.path);
+    if (list === 'pages') adm.pageIdx = 0;
+  }
+  markDirty(); renderTab();
+}
+
+/* ---------- bağlama ---------- */
+const adminRoot = $('#admin');
+adminRoot.addEventListener('input', onField);
+adminRoot.addEventListener('change', e => {
+  if (e.target.id === 'ph-file') return handleUpload(e.target);
+  if (e.target.id === 'logo-file') return handleLogo(e.target);
+  onField(e);
+});
+adminRoot.addEventListener('click', onClick);
+adminRoot.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (e.target.id !== 'loginForm') return;
+  const em = e.target.elements.email.value.trim(), pw = e.target.elements.password.value;
+  setMsg('loginMsg', 'Giriş yapılıyor…');
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email: em, password: pw });
+    if (error) throw error;
+    adm.session = data.session; adm.draft = null; renderAdmin();
+  } catch (er) { setMsg('loginMsg', /invalid|credentials/i.test(er.message) ? 'E-posta veya şifre hatalı.' : 'Hata: ' + er.message, 'err'); }
+});
+
+if (sb) {
+  sb.auth.getSession().then(r => { adm.session = r.data.session; adm.checked = true; if (currentSlug() === 'yonetici') renderAdmin(); })
+    .catch(() => { adm.checked = true; if (currentSlug() === 'yonetici') renderAdmin(); });
+  sb.auth.onAuthStateChange((_ev, session) => {
+    const had = !!adm.session; adm.session = session;
+    if (had !== !!session && currentSlug() === 'yonetici') { adm.draft = null; renderAdmin(); }
+  });
+}
+
+init();
+})();
+</script>
+</body>
+</html>
