@@ -1,0 +1,27 @@
+name: Supabase uyanik tut
+
+# Haftada 2 kez veritabanina kucuk bir istek atar; boylece ucretsiz plandaki
+# proje 7 gunluk hareketsizlikten dolayi uyku moduna girmez.
+# Adres ve anahtari index.html dosyasindan kendisi okur; ayrica bir sey girmeniz gerekmez.
+
+on:
+  schedule:
+    - cron: '17 6 * * 1,4'   # Pazartesi ve Persembe
+  workflow_dispatch:          # Elle de calistirilabilir
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Veritabanina istek at
+        run: |
+          URL=$(grep -oP "const SUPABASE_URL = '\K[^']+" index.html)
+          KEY=$(grep -oP "const SUPABASE_ANON_KEY = '\K[^']+" index.html)
+          case "$URL" in
+            https://*) ;;
+            *) echo "index.html icinde Supabase adresi henuz girilmemis; atlaniyor."; exit 0 ;;
+          esac
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" "$URL/rest/v1/site_data?select=key&limit=1" -H "apikey: $KEY" -H "Authorization: Bearer $KEY")
+          echo "Yanit kodu: $CODE"
+          test "$CODE" = "200"
